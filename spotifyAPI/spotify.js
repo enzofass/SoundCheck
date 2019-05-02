@@ -1,9 +1,11 @@
 function searchSpotify(token) {
+
   // Grab text the user typed into the search input, add to the queryParams object
   queryParams = $("#search-term")
     .val()
     .trim();
   console.log(queryParams);
+  
   $.ajax({
     url:
       "https://api.spotify.com/v1/search?q=" +
@@ -40,7 +42,7 @@ function searchSpotify(token) {
       }
       console.log("tracklist var: ", tracklist);
       console.log(tracklistString);
-      $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/track/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`);
+      // $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/track/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`);
       $.ajax({
         url:
           "https://api.spotify.com/v1/me",      
@@ -58,12 +60,33 @@ function searchSpotify(token) {
             Authorization: "Bearer " + token
           },
           data: JSON.stringify({
-            name: "newplaylist",
+            name: "Mic Check Playlist",
             
           })
           
         }).then(function(res, err) {
-          console.log("create playlist:",  res);
+          console.log("create playlist:",  res.id);
+          let playlistID = res.id;
+          $.ajax({
+            url:
+              "https://api.spotify.com/v1/playlists/" + res.id + "/tracks?" + tracklistString,      
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token
+            },
+            data: JSON.stringify({
+              name: "Mic Check Playlist",
+              
+            })
+            
+          }).then(function(res, err) {
+            console.log("populating playlist:",  res);
+            $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/playlist/${playlistID}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`);
+            // <iframe src="https://open.spotify.com/embed/album/1DFixLWuPkv3KT3TnV35m3" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            
+    
+          });
+          
   
         });
 
