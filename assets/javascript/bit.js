@@ -49,6 +49,8 @@ $(document).on("click", ".show-button", function () {
 
     spotifyArray = $(this).attr("data-artist")
 
+    
+
 
 
     console.log(spotifyArray);
