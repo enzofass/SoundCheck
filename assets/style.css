@@ -1,0 +1,41 @@
+html {
+    min-height: 100%;
+    width: 100%;
+}
+
+body {
+    background-image: url("../assets/images/rock-concert-background-3.jpg");
+    min-height: 100%;
+    width: 100%;
+    padding: 100px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+
+  
+   }
+
+form {
+
+    position: center;
+    width: 60%;
+
+}
+
+button{
+    margin-top: 5px;
+    float: right;
+}
+
+
+@font-face {
+    font-family:mon-reg ;
+    src: url(../assets/texts/Monoton-Regular.ttf);
+}
+
+h1 {
+
+    font-family: mon-reg;
+    color: red;
+    font-size: 100px;
+}
