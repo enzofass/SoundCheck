@@ -1,4 +1,5 @@
 function searchSpotify(token, artist) {
+
     // Grab text the user typed into the search input, add to the queryParams object
     queryParams = $("#search-term")
         .val()
@@ -41,6 +42,7 @@ function searchSpotify(token, artist) {
 }
 //6GI52t8N5F02MxU0g5U69P
 (function () {
+
     var stateKey = "spotify_auth_state";
     /**
      * Obtains parameters from the hash of the URL
@@ -120,9 +122,13 @@ function searchSpotify(token, artist) {
                 url += "&redirect_uri=" + encodeURIComponent(redirect_uri);
                 url += "&state=" + encodeURIComponent(state);
                 window.location = url;
-                $("#user-profile").hide();
             },
             false
         );
+        $("#user-profile").hide();
+        $("#artist-search").hide()
+        $("#artist-search-button").hide()
     }
+    $("#artist-search").show()
+    $("#artist-search-button").show()
 })();
