@@ -1,0 +1,34 @@
+html {
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  background: url('../images/aditya-chinchure-494048-unsplash.jpg') no-repeat
+    center center fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+button {
+  margin-top: 5px;
+  float: right;
+}
+
+h1 {
+  color: red;
+}
+
+#navbar {
+  background: transparent;
+}
+#content {
+  display: block;
+  content: '';
+  clear: both;
+}
+
+.title {
+  font-family: 'Monoton', cursive;
+}
