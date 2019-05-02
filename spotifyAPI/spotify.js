@@ -9,10 +9,7 @@ function searchSpotify(token) {
       "https://api.spotify.com/v1/search?q=" +
       "santana" +
       "&" +
-      "type=artist",
-    // url: "https://api.spotify.com/v1/artists/" + "6GI52t8N5F02MxU0g5U69P" + "/top-tracks?country=us",
-    // url: "https://api.spotify.com/v1/tracks/3n3Ppam7vgaVa1iaRUc9Lp",
-    // url: "https://api.spotify.com/v1/tracks/0a1gOGCiEmRif2JpknNEGW",
+      "type=artist",    
     method: "GET",
     headers: {
       Authorization: "Bearer " + token
@@ -24,22 +21,58 @@ function searchSpotify(token) {
       url:
         "https://api.spotify.com/v1/artists/" +
         response.artists.items[0].id +
-        "/top-tracks?country=us",
-      // url: "https://api.spotify.com/v1/tracks/3n3Ppam7vgaVa1iaRUc9Lp",
-      // url: "https://api.spotify.com/v1/tracks/0a1gOGCiEmRif2JpknNEGW",
+        "/top-tracks?country=us",      
       method: "GET",
       headers: {
         Authorization: "Bearer " + token
       }
     }).then(function(res, err) {
-      console.log(token);
-      console.log(res.tracks[0].id);
-      $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/track/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`)
+      console.log(res);
+      let tracklist = [];
+      let tracklistString = "uris=";
+      for (let i=0; i<res.tracks.length; i++) {
+        tracklist.push(res.tracks[i].id);
+        if (i === res.tracks.length -1){
+        tracklistString += `spotify:track:${res.tracks[i].id}`
+        }else {
+          tracklistString += `spotify:track:${res.tracks[i].id},`
+        }
+      }
+      console.log("tracklist var: ", tracklist);
+      console.log(tracklistString);
+      $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/track/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`);
+      $.ajax({
+        url:
+          "https://api.spotify.com/v1/me",      
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }).then(function(res, err) {
+        console.log(res.id);
+        $.ajax({
+          url:
+            "https://api.spotify.com/v1/users/" + res.id + "/playlists",      
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token
+          },
+          data: JSON.stringify({
+            name: "newplaylist",
+            
+          })
+          
+        }).then(function(res, err) {
+          console.log("create playlist:",  res);
+  
+        });
+
+      });
       
     });
   });
 }
-//6GI52t8N5F02MxU0g5U69P
+
 (function() {
   var stateKey = "spotify_auth_state";
   /**
@@ -109,7 +142,7 @@ function searchSpotify(token) {
         var redirect_uri = "http://127.0.0.1:5500/spotifyAPI/index.html"; // Your redirect uri
         var state = generateRandomString(16);
         localStorage.setItem(stateKey, state);
-        var scope = "user-read-private user-read-email";
+        var scope = "user-read-private user-read-email playlist-modify";
         var url = "https://accounts.spotify.com/authorize";
         url += "?response_type=token";
         url += "&client_id=" + encodeURIComponent(client_id);
