@@ -7,7 +7,7 @@ body {
     background-image: url("../assets/images/rock-concert-background-3.jpg");
     min-height: 100%;
     width: 100%;
-    padding: 100px;
+    padding: 10px 100px;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -38,4 +38,20 @@ h1 {
     font-family: mon-reg;
     color: red;
     font-size: 100px;
+    float: left;
 }
+
+#form-row{
+
+    
+}
+
+#navbar{
+
+    background: transparent;
+}
+#content {
+    display:block;
+    content:"";
+    clear:both;
+  }
