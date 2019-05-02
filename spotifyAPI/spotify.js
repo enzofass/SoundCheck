@@ -34,7 +34,7 @@ function searchSpotify(token) {
     }).then(function(res, err) {
       console.log(token);
       console.log(res.tracks[0].id);
-      $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/trackset/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`)
+      $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/track/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`)
       
     });
   });
