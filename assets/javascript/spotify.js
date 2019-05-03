@@ -1,14 +1,19 @@
+let access_token;
+
 function searchSpotify(token, artist) {
 
-    // Grab text the user typed into the search input, add to the queryParams object
-    queryParams = $("#search-term")
-        .val()
-        .trim();
-    console.log(queryParams);
+    // // Grab text the user typed into the search input, add to the queryParams object
+    // queryParams = $("#artist-search")
+    //     .val()
+    //     .trim();
+    // console.log(queryParams);
+
+    
+
     $.ajax({
         url:
             "https://api.spotify.com/v1/search?q=" +
-            "santana" +
+            artist +
             "&" +
             "type=artist",
         // url: "https://api.spotify.com/v1/artists/" + "6GI52t8N5F02MxU0g5U69P" + "/top-tracks?country=us",
@@ -81,7 +86,7 @@ function searchSpotify(token, artist) {
         (oauthPlaceholder = document.getElementById("oauth"));
 
     var params = getHashParams(); // this should be the access token after the redirect
-    var access_token = params.access_token,
+    access_token = params.access_token,
         state = params.state,
         storedState = localStorage.getItem(stateKey);
 
@@ -96,20 +101,24 @@ function searchSpotify(token, artist) {
                     Authorization: "Bearer " + access_token
                 },
                 success: function (response) {
-                    userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                    // userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                     $("#login").hide();
                     $("#loggedin").show();
-                    searchSpotify(access_token);
+                    // searchSpotify(access_token);
+                    $("#artist-input").show();
+                    $("#add-artist").show();
                 }
             });
         } else {
             $("#login").show();
             $("#loggedin").hide();
         }
+
+        
         document.getElementById("login-button").addEventListener(
             "click",
             function (e) {
-                e.preventDefault()
+                e.preventDefault();
                 var client_id = "2cdaa474a40145d9891e1690a0a81ac0"; // Your client id
                 var redirect_uri = "http://127.0.0.1:5501/index.html"; // Your redirect uri
                 var state = generateRandomString(16);
@@ -122,13 +131,24 @@ function searchSpotify(token, artist) {
                 url += "&redirect_uri=" + encodeURIComponent(redirect_uri);
                 url += "&state=" + encodeURIComponent(state);
                 window.location = url;
+                
+                
+                
             },
             false
         );
         $("#user-profile").hide();
-        $("#artist-search").hide()
-        $("#artist-search-button").hide()
+        $("#artist-input").hide();
+        $("#add-artist").hide();
+        
+        
+        
+
+
     }
-    $("#artist-search").show()
-    $("#artist-search-button").show()
+    
+    
+
 })();
+
+

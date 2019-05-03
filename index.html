@@ -36,11 +36,15 @@
 
   <nav class="navbar navbar-light bg-light">
     <h1 class="title">SoundCheck</h1>
-    <form class="form-inline" >
-      <input class="form-control mr-sm-2" id="artist-search" type="search" placeholder="Foo Fighters" aria-label="Search" />
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="artist-search-button">
+    <form class="form-inline" id="artist-search-form" >
+      <input class="form-control mr-sm-2" id="artist-input" type="search" placeholder="Foo Fighters" aria-label="Search" />
+      <button class="btn btn-outline-success my-2 my-sm-0" id="add-artist" type="submit" >
         Search
       </button>
+      
+    </form>
+
+    <form class="form-inline">
       <div id="login">
         <h1 id="#welcome-message" >Welcome To SoundCheck! Please Log In With Spotify</h1>
         <button id="login-button" class="btn btn-primary">Log in with Spotify</button>
@@ -48,22 +52,13 @@
     </form>
   </nav>
 
-  <div class="containter">
+  <div class="containter" id="shows">
     <div class="row">
       <div class="col">
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad ex, ut
-        cum soluta nostrum dolorem perspiciatis magni quas tenetur quod porro
-        officiis iste architecto cumque expedita, dolore, assumenda maiores!
-        Ducimus odio et sunt recusandae dolore neque ratione, quibusdam
-        pariatur saepe magnam tempore explicabo quis iure cum vel
-        reprehenderit inventore. Deserunt.
+        show buttons go here
       </div>
       <div class="col">
-
-       
-        
         <div id="musicDiv"></div>
-
       </div>
     </div>
   </div>
