@@ -1,5 +1,8 @@
+
+
 let artist;
-// let artistArray = [];
+let spotifyArray = [];
+
 
 
 
@@ -31,7 +34,7 @@ const renderShows = function (responseArray) {
 
     });
 }
-// click handler for grabbing info from the show buttons to give to spotify 
+// click handler for grabbing info from search bar and making buttons
 $("#add-artist").on("click", function (event) {
     event.preventDefault();
     artist = $("#artist-input").val().trim();
@@ -40,19 +43,24 @@ $("#add-artist").on("click", function (event) {
 
 })
 
-let spotifyArray = [];
+
 
 // click handler for picking a show to grab info from and send to spootifu API 
 $(document).on("click", ".show-button", function () {
     console.log("showbutton");
-
-
     spotifyArray = $(this).attr("data-artist")
-
-
-
+    for (let i = 0; i<spotifyArray.length; i++){
+        searchSpotify(access_token, spotifyArray[i]);
+    }
+    
     console.log(spotifyArray);
+    
 });
+
+
+
+
+
 
 
 
