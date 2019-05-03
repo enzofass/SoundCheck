@@ -1,46 +1,127 @@
+let trackListString;
+let playlistId;
+
 function searchSpotify(token) {
-  // Grab text the user typed into the search input, add to the queryParams object
-  queryParams = $("#search-term")
-    .val()
-    .trim();
-  console.log(queryParams);
-  $.ajax({
+  $("#run-search").on("click", function (event) {
+    event.preventDefault();
+
+    // Grab text the user typed into the search input, add to the queryParams object
+    searchParams = $("#search-term")
+      .val()
+      .trim();
+    console.log(searchParams);
+
+    searchArtist(searchParams, token)
+      .then(function (response, err) {
+        console.log(response);
+        console.log(response.artists.items[0].id);
+        const artistId = response.artists.items[0].id;
+
+        return getTopTracks(artistId, token);
+      }).then(function (res, err) {
+        console.log(res);
+        let tracklist = [];
+        trackListString = "uris=";
+        for (let i = 0; i < res.tracks.length; i++) {
+          tracklist.push(res.tracks[i].id);
+          if (i === res.tracks.length - 1) {
+            trackListString += `spotify:track:${res.tracks[i].id}`;
+          } else {
+            trackListString += `spotify:track:${res.tracks[i].id},`;
+          }
+        }
+        console.log("tracklist var: ", tracklist);
+        console.log(trackListString);
+
+        return getUser(token)
+      }).then(function (res, err) {
+        const userId = res.id;
+        return createPlaylist(userId, token);
+      }).then(function (res, err) {
+        console.log("create playlist:", res.id);
+        playlistId = res.id;
+        return updatePlaylist(res.id, trackListString, token)
+      }).then(function (res, err) {
+        renderPlaylist(playlistId);
+      });;
+  });
+}
+
+function searchArtist(searchParams, token) {
+  return $.ajax({
     url:
       "https://api.spotify.com/v1/search?q=" +
-      "santana" +
+      searchParams +
       "&" +
       "type=artist",
-    // url: "https://api.spotify.com/v1/artists/" + "6GI52t8N5F02MxU0g5U69P" + "/top-tracks?country=us",
-    // url: "https://api.spotify.com/v1/tracks/3n3Ppam7vgaVa1iaRUc9Lp",
-    // url: "https://api.spotify.com/v1/tracks/0a1gOGCiEmRif2JpknNEGW",
     method: "GET",
     headers: {
       Authorization: "Bearer " + token
     }
-  }).then(function(response, err) {
-    console.log(response);
-    console.log(response.artists.items[0].id);
-    $.ajax({
-      url:
-        "https://api.spotify.com/v1/artists/" +
-        response.artists.items[0].id +
-        "/top-tracks?country=us",
-      // url: "https://api.spotify.com/v1/tracks/3n3Ppam7vgaVa1iaRUc9Lp",
-      // url: "https://api.spotify.com/v1/tracks/0a1gOGCiEmRif2JpknNEGW",
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token
-      }
-    }).then(function(res, err) {
-      console.log(token);
-      console.log(res.tracks[0].id);
-      $("#musicDiv").append(`<iframe src="https://open.spotify.com/embed/track/${res.tracks[0].id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`)
-      
-    });
-  });
+  })
 }
-//6GI52t8N5F02MxU0g5U69P
-(function() {
+
+function getTopTracks(artistId, token) {
+  return $.ajax({
+    url:
+      "https://api.spotify.com/v1/artists/" +
+      artistId +
+      "/top-tracks?country=us",
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token
+    }
+  })
+}
+function getUser(token) {
+  return $.ajax({
+    url: "https://api.spotify.com/v1/me",
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token
+    }
+  })
+}
+
+function createPlaylist(userId, token) {
+  return $.ajax({
+    url: "https://api.spotify.com/v1/users/" + userId + "/playlists",
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token
+    },
+    data: JSON.stringify({
+      name: "SoundCheck Playlist"
+    })
+  })
+}
+
+function updatePlaylist(playlistId, trackListString, token) {
+  return $.ajax({
+    url:
+      "https://api.spotify.com/v1/playlists/" +
+      playlistId +
+      "/tracks?" +
+      trackListString,
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token
+    },
+    data: JSON.stringify({
+      name: "Mic Check Playlist"
+    })
+  })
+}
+
+function renderPlaylist(playlistId) {
+  console.log("populating playlist:", playlistId);
+  $("#musicDiv").append(
+    `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+  );
+}
+
+///////////////////////////////////////// Bearer Token ///////////////////////////////////////////////////////////////////////////
+(function () {
   var stateKey = "spotify_auth_state";
   /**
    * Obtains parameters from the hash of the URL
@@ -71,7 +152,7 @@ function searchSpotify(token) {
     return text;
   }
   var userProfileSource = document.getElementById("user-profile-template")
-      .innerHTML,
+    .innerHTML,
     userProfileTemplate = Handlebars.compile(userProfileSource),
     userProfilePlaceholder = document.getElementById("user-profile");
   (oauthSource = document.getElementById("oauth-template").innerHTML),
@@ -84,14 +165,14 @@ function searchSpotify(token) {
   if (access_token && (state == null || state !== storedState)) {
     alert("There was an error during the authentication");
   } else {
-  //   localStorage.removeItem(stateKey);
+    //   localStorage.removeItem(stateKey);
     if (access_token) {
       $.ajax({
         url: "https://api.spotify.com/v1/me",
         headers: {
           Authorization: "Bearer " + access_token
         },
-        success: function(response) {
+        success: function (response) {
           userProfilePlaceholder.innerHTML = userProfileTemplate(response);
           $("#login").hide();
           $("#loggedin").show();
@@ -104,13 +185,13 @@ function searchSpotify(token) {
     }
     document.getElementById("login-button").addEventListener(
       "click",
-      function() {
-          console.log("Login Clicked")
+      function () {
+        console.log("Login Clicked")
         var client_id = "2cdaa474a40145d9891e1690a0a81ac0"; // Your client id
         var redirect_uri = "http://127.0.0.1:5501/spotifyAPI/index.html"; // Your redirect uri
         var state = generateRandomString(16);
         localStorage.setItem(stateKey, state);
-        var scope = "user-read-private user-read-email";
+        var scope = "user-read-private user-read-email playlist-modify";
         var url = "https://accounts.spotify.com/authorize";
         url += "?response_type=token";
         url += "&client_id=" + encodeURIComponent(client_id);
