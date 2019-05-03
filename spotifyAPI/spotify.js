@@ -1,14 +1,13 @@
 let trackListString;
 let playlistId;
+let access_token;
 
-function searchSpotify(token) {
-  $("#run-search").on("click", function (event) {
-    event.preventDefault();
+function searchSpotify(token, searchParams) {
+  
+    
 
     // Grab text the user typed into the search input, add to the queryParams object
-    searchParams = $("#search-term")
-      .val()
-      .trim();
+    
     console.log(searchParams);
 
     searchArtist(searchParams, token)
@@ -33,19 +32,30 @@ function searchSpotify(token) {
         console.log("tracklist var: ", tracklist);
         console.log(trackListString);
 
-        return getUser(token)
-      }).then(function (res, err) {
-        const userId = res.id;
-        return createPlaylist(userId, token);
-      }).then(function (res, err) {
-        console.log("create playlist:", res.id);
-        playlistId = res.id;
-        return updatePlaylist(res.id, trackListString, token)
-      }).then(function (res, err) {
-        renderPlaylist(playlistId);
-      });;
-  });
+        makeFinalPlaylist()
+       
+      })
+  
 }
+
+function makeFinalPlaylist(){
+  token = access_token;
+  getUser(token)
+  .then(function (res, err) {
+    const userId = res.id;
+    return createPlaylist(userId, token);
+  }).then(function (res, err) {
+    console.log("create playlist:", res.id);
+    playlistId = res.id;
+    return updatePlaylist(res.id, trackListString, token)
+  }).then(function (res, err) {
+    renderPlaylist(playlistId);
+  });;
+
+}
+
+
+
 
 function searchArtist(searchParams, token) {
   return $.ajax({
@@ -159,7 +169,7 @@ function renderPlaylist(playlistId) {
     (oauthTemplate = Handlebars.compile(oauthSource)),
     (oauthPlaceholder = document.getElementById("oauth"));
   var params = getHashParams();
-  var access_token = params.access_token,
+  access_token = params.access_token,
     state = params.state,
     storedState = localStorage.getItem(stateKey);
   if (access_token && (state == null || state !== storedState)) {
@@ -173,10 +183,10 @@ function renderPlaylist(playlistId) {
           Authorization: "Bearer " + access_token
         },
         success: function (response) {
-          userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+          // userProfilePlaceholder.innerHTML = userProfileTemplate(response);
           $("#login").hide();
           $("#loggedin").show();
-          searchSpotify(access_token);
+          // searchSpotify(access_token);
         }
       });
     } else {
@@ -185,10 +195,11 @@ function renderPlaylist(playlistId) {
     }
     document.getElementById("login-button").addEventListener(
       "click",
-      function () {
+      function (e) {
+        e.preventDefault();
         console.log("Login Clicked")
         var client_id = "2cdaa474a40145d9891e1690a0a81ac0"; // Your client id
-        var redirect_uri = "http://127.0.0.1:5501/spotifyAPI/index.html"; // Your redirect uri
+        var redirect_uri = "http://127.0.0.1:5501/index.html"; // Your redirect uri
         var state = generateRandomString(16);
         localStorage.setItem(stateKey, state);
         var scope = "user-read-private user-read-email playlist-modify";
@@ -205,3 +216,65 @@ function renderPlaylist(playlistId) {
     );
   }
 })();
+
+//////////////// BIT //////////////////////////////////////////////////////////////
+
+let artist;
+let spotifyArray = [];
+
+
+
+
+// function to grab all the shows from an artist input via bandsintown API 
+function queryShows() {
+
+    const queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=db4cdbfd2bad1b7a3e4cdc51a42f15b9&date=upcoming";
+    $.ajax({
+        url: queryUrl,
+        method: "GET"
+    })
+        .then(function (response) {
+            console.log(response);
+            //  var showsArray = response.offers.artist
+            renderShows(response);
+        })
+
+}
+
+
+// function to render show buttons to the DOM 
+const renderShows = function (responseArray) {
+    const showContainer = $("<div>");
+    responseArray.forEach(function (artistInfo) {
+        console.log(artistInfo.lineup.toString())
+        var str = artistInfo.datetime;
+        var res = str.substring(0, 10);
+        $("#shows").append(`<button class="show-button" data-artist="${artistInfo.lineup}"> City: ${artistInfo.venue.city} State: ${artistInfo.venue.region} Date: ${res} Full Lineup: ${artistInfo.lineup}</button>`);
+
+    });
+}
+// click handler for grabbing info from search bar and making buttons
+$("#add-artist").on("click", function (event) {
+    event.preventDefault();
+    artist = $("#artist-input").val().trim();
+    queryShows();
+    console.log("add shows button");
+
+})
+
+
+
+// click handler for picking a show to grab info from and send to spootifu API 
+$(document).on("click", ".show-button", function () {
+    console.log("showbutton");
+    spotifyArray = $(this).attr("data-artist").split(",");
+    console.log(spotifyArray.length);
+    console.log($(this).attr("data-artist"))
+    for (let i = 0; i<spotifyArray.length; i++){
+        searchSpotify(access_token, spotifyArray);
+    }
+    
+    
+    
+});
+
