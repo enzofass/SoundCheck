@@ -1,56 +1,62 @@
-let trackListString;
+let trackListString = "";
 let playlistId;
 let access_token;
+let tracklist;
+let artistId;
 
 function searchSpotify(token, searchParams) {
+  tracklist = [];
+
+
+  // Grab text the user typed into the search input, add to the queryParams object
+
+  console.log(searchParams);
   
-    
-
-    // Grab text the user typed into the search input, add to the queryParams object
-    
-    console.log(searchParams);
-
-    searchArtist(searchParams, token)
-      .then(function (response, err) {
-        console.log(response);
-        console.log(response.artists.items[0].id);
-        const artistId = response.artists.items[0].id;
-
-        return getTopTracks(artistId, token);
-      }).then(function (res, err) {
-        console.log(res);
-        let tracklist = [];
-        trackListString = "uris=";
-        for (let i = 0; i < res.tracks.length; i++) {
-          tracklist.push(res.tracks[i].id);
-          if (i === res.tracks.length - 1) {
-            trackListString += `spotify:track:${res.tracks[i].id}`;
-          } else {
-            trackListString += `spotify:track:${res.tracks[i].id},`;
-          }
-        }
-        console.log("tracklist var: ", tracklist);
-        console.log(trackListString);
-
-        makeFinalPlaylist()
-       
-      })
+  console.log("trackliststring= ", trackListString, "tracklist= ", tracklist);
   
+
+  searchArtist(searchParams, token)
+    .then(function (response, err) {
+      console.log(response);
+      console.log(response.artists.items[0].id);
+      artistId = response.artists.items[0].id;
+
+      return getTopTracks(artistId, token);
+    }).then(function (res, err) {
+      console.log(res);
+      
+      for (let i = 0; i < res.tracks.length; i++) {
+        tracklist.push(res.tracks[i].id);
+        trackListString += `spotify:track:${res.tracks[i].id},`;
+      }
+      console.log("tracklist var: ", tracklist);
+      console.log(trackListString);
+
+
+      
+
+    })
+
 }
 
-function makeFinalPlaylist(){
+function makeFinalPlaylist() {
   token = access_token;
   getUser(token)
-  .then(function (res, err) {
-    const userId = res.id;
-    return createPlaylist(userId, token);
-  }).then(function (res, err) {
-    console.log("create playlist:", res.id);
-    playlistId = res.id;
-    return updatePlaylist(res.id, trackListString, token)
-  }).then(function (res, err) {
-    renderPlaylist(playlistId);
-  });;
+    .then(function (res, err) {
+      const userId = res.id;
+      console.log("getuser")
+      return createPlaylist(userId, token);
+    }).then(function (res, err) {
+      console.log("create playlist:", res.id);
+      playlistId = res.id;
+      console.log("create playlist" + token)
+      console.log(playlistId);
+      return updatePlaylist(res.id, trackListString, token)
+    }).then(function () {
+      console.log("renderplaylist")
+      renderPlaylist(playlistId);
+      
+    });;
 
 }
 
@@ -112,7 +118,7 @@ function updatePlaylist(playlistId, trackListString, token) {
       "https://api.spotify.com/v1/playlists/" +
       playlistId +
       "/tracks?" +
-      trackListString,
+      "uris="+trackListString,
     method: "POST",
     headers: {
       Authorization: "Bearer " + token
@@ -126,7 +132,7 @@ function updatePlaylist(playlistId, trackListString, token) {
 function renderPlaylist(playlistId) {
   console.log("populating playlist:", playlistId);
   $("#musicDiv").append(
-    `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+    `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
 }
 
@@ -228,37 +234,37 @@ let spotifyArray = [];
 // function to grab all the shows from an artist input via bandsintown API 
 function queryShows() {
 
-    const queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=db4cdbfd2bad1b7a3e4cdc51a42f15b9&date=upcoming";
-    $.ajax({
-        url: queryUrl,
-        method: "GET"
+  const queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=db4cdbfd2bad1b7a3e4cdc51a42f15b9&date=upcoming";
+  $.ajax({
+    url: queryUrl,
+    method: "GET"
+  })
+    .then(function (response) {
+      console.log(response);
+      //  var showsArray = response.offers.artist
+      renderShows(response);
     })
-        .then(function (response) {
-            console.log(response);
-            //  var showsArray = response.offers.artist
-            renderShows(response);
-        })
 
 }
 
 
 // function to render show buttons to the DOM 
 const renderShows = function (responseArray) {
-    const showContainer = $("<div>");
-    responseArray.forEach(function (artistInfo) {
-        console.log(artistInfo.lineup.toString())
-        var str = artistInfo.datetime;
-        var res = str.substring(0, 10);
-        $("#shows").append(`<button class="show-button" data-artist="${artistInfo.lineup}"> City: ${artistInfo.venue.city} State: ${artistInfo.venue.region} Date: ${res} Full Lineup: ${artistInfo.lineup}</button>`);
+  const showContainer = $("<div>");
+  responseArray.forEach(function (artistInfo) {
+    console.log(artistInfo.lineup.toString())
+    var str = artistInfo.datetime;
+    var res = str.substring(0, 10);
+    $("#shows").append(`<button class="show-button" data-artist="${artistInfo.lineup}"> City: ${artistInfo.venue.city} State: ${artistInfo.venue.region} Date: ${res} Full Lineup: ${artistInfo.lineup}</button>`);
 
-    });
+  });
 }
 // click handler for grabbing info from search bar and making buttons
 $("#add-artist").on("click", function (event) {
-    event.preventDefault();
-    artist = $("#artist-input").val().trim();
-    queryShows();
-    console.log("add shows button");
+  event.preventDefault();
+  artist = $("#artist-input").val().trim();
+  queryShows();
+  console.log("add shows button");
 
 })
 
@@ -266,15 +272,30 @@ $("#add-artist").on("click", function (event) {
 
 // click handler for picking a show to grab info from and send to spootifu API 
 $(document).on("click", ".show-button", function () {
-    console.log("showbutton");
-    spotifyArray = $(this).attr("data-artist").split(",");
-    console.log(spotifyArray.length);
-    console.log($(this).attr("data-artist"))
-    for (let i = 0; i<spotifyArray.length; i++){
-        searchSpotify(access_token, spotifyArray);
+  console.log("showbutton");
+  spotifyArray = $(this).attr("data-artist").split(",");
+  console.log(spotifyArray);
+  console.log($(this).attr("data-artist"))
+
+  if (spotifyArray.length > 1) {
+    for (let i = 0; i < spotifyArray.length; i++) {
+      searchSpotify(access_token, spotifyArray[i]);
+      console.log(access_token);
     }
     
-    
-    
+  }
+  else {
+    searchSpotify(access_token, spotifyArray);
+  }
+
+
+console.log(trackListString);
+
+  
+  makeFinalPlaylist();
+
+
 });
+
+
 
