@@ -1,7 +1,8 @@
 
 
 let artist;
-// let artistArray = [];
+let spotifyArray = [];
+
 
 
 
@@ -42,22 +43,16 @@ $("#add-artist").on("click", function (event) {
 
 })
 
-let spotifyArray = [];
+
 
 // click handler for picking a show to grab info from and send to spootifu API 
 $(document).on("click", ".show-button", function () {
     console.log("showbutton");
-
-
     spotifyArray = $(this).attr("data-artist")
-
     for (let i = 0; i<spotifyArray.length; i++){
-        searchSpotify(access_token, artist);
+        searchSpotify(access_token, spotifyArray[i]);
     }
-   
-
-
-    searchSpotify(token, artist);
+    
     console.log(spotifyArray);
     
 });
