@@ -1,50 +1,58 @@
+// global variables
 let trackListString = "";
 let playlistId;
 let access_token;
 let tracklist;
 let artistId;
 
-function searchSpotify(token, searchParams, arrayLength) {
+// main spotify search function called when user clicks show button generated from BIT
+function searchSpotify(token, searchParams, arrayLength, lastPass) {
+  // clear tracklist array
   tracklist = [];
-  
-  // Grab text the user typed into the search input, add to the queryParams object
-
-  console.log(searchParams);
-
+  console.log(searchParams, lastPass);
   console.log("trackliststring= ", trackListString, "tracklist= ", tracklist);
 
+  // spotify api search artist get request, response is an object and we grab the id in order to continue
   searchArtist(searchParams, token)
     .then(function(response, err) {
       console.log(response);
       console.log(response.artists.items[0].id);
       artistId = response.artists.items[0].id;
-
+      // calls getTopTracks function which generates an array of top tracks for artist
       return getTopTracks(artistId, token);
     })
     .then(function(res, err) {
-      console.log(res);
-
+      console.log(res, arrayLength);
+      // for loop that iterates through the spotify top tracks array and pushes tracks into our tracklist var
       for (let i = 0; i < res.tracks.length; i++) {
         tracklist.push(res.tracks[i].id);
-        if (i == arrayLength) {
-          tracklist = shuffle(tracklist);
-          console.log("shuffle: ", tracklist);
-          for (let l = 0; l < tracklist.length; l++) {
-            trackListString += `spotify:track:${tracklist[l]},`;
-          }
+      }
+      // if we are done adding tracks to the array then we shuffle tracks and if array length is larger than 100 we narrow using splice meathod
+      if (lastPass) {
+        tracklist = shuffle(tracklist);
+        if (tracklist.length > 100) {
+          tracklist.splice(0, 100);
+        }
+        console.log("shuffle: ", tracklist);
+        // this loop takes final tracklist array and converts to a string with concatinated text required for sportify api post request
+        for (let l = 0; l < tracklist.length; l++) {
+          trackListString += `spotify:track:${tracklist[l]},`;
         }
       }
+      // i <3 console.log
       console.log("tracklist var: ", tracklist);
       console.log(trackListString);
     });
 }
 
+// this function is called once we have a finalized tracklist
 function makeFinalPlaylist() {
   token = access_token;
   getUser(token)
     .then(function(res, err) {
       const userId = res.id;
       console.log("getuser");
+      // This function creates a new playlist called SoundCheck Playlist for spotify user logged in
       return createPlaylist(userId, token);
     })
     .then(function(res, err) {
@@ -52,18 +60,23 @@ function makeFinalPlaylist() {
       playlistId = res.id;
       console.log("create playlist" + token);
       console.log(playlistId);
+      // This funtion loads out tracklist into the newly generated playlist
       return updatePlaylist(res.id, trackListString, token);
     })
     .then(function() {
       console.log("renderplaylist");
+      // This function renders the playlist to the DOM
       renderPlaylist(playlistId);
-      
     })
     .then(function() {
+      // Clear tracklist string 
       trackListString = "";
     });
 }
 
+//////////// Function Definitions /////////////////////
+
+// Search artist spotify get request
 function searchArtist(searchParams, token) {
   return $.ajax({
     url:
@@ -78,6 +91,7 @@ function searchArtist(searchParams, token) {
   });
 }
 
+// Get top tracks of artist
 function getTopTracks(artistId, token) {
   return $.ajax({
     url:
@@ -90,6 +104,8 @@ function getTopTracks(artistId, token) {
     }
   });
 }
+
+// Get user id
 function getUser(token) {
   return $.ajax({
     url: "https://api.spotify.com/v1/me",
@@ -100,7 +116,7 @@ function getUser(token) {
   });
 }
 
-// This function gets the userId from getUser() and using that id it can create a new playlist for that user
+// create new SoundCheck Playlist
 function createPlaylist(userId, token) {
   return $.ajax({
     url: "https://api.spotify.com/v1/users/" + userId + "/playlists",
@@ -115,38 +131,21 @@ function createPlaylist(userId, token) {
 }
 
 // shuffle array to generate an array of random numbers. This way each crystal has a unique number (found this online :D)
-// function shuffle(array) {
-//   let currentIndex = array.length,
-//     temporaryValue,
-//     randomIndex;
-
-//   // While there remain elements to shuffle...
-//   while (0 !== currentIndex) {
-//     // Pick a remaining element...
-//     randomIndex = Math.floor(Math.random() * currentIndex);
-//     currentIndex -= 1;
-
-//     // And swap it with the current element.
-//     temporaryValue = array[currentIndex];
-//     array[currentIndex] = array[randomIndex];
-//     array[randomIndex] = temporaryValue;
-//   }
-//   return array;
-// }
-function shuffle (array) {
-  var i = 0
-    , j = 0
-    , temp = null
+function shuffle(array) {
+  var i = 0,
+    j = 0,
+    temp = null;
 
   for (i = array.length - 1; i > 0; i -= 1) {
-    j = Math.floor(Math.random() * (i + 1))
-    temp = array[i]
-    array[i] = array[j]
-    array[j] = temp
+    j = Math.floor(Math.random() * (i + 1));
+    temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
   return array;
 }
 
+// add tracks to playlist
 function updatePlaylist(playlistId, trackListString, token) {
   return $.ajax({
     url:
@@ -165,6 +164,7 @@ function updatePlaylist(playlistId, trackListString, token) {
   });
 }
 
+// render playlist to DOM
 function renderPlaylist(playlistId) {
   console.log("populating playlist:", playlistId);
   $("#musicDiv").append(
@@ -172,7 +172,7 @@ function renderPlaylist(playlistId) {
   );
 }
 
-///////////////////////////////////////// Bearer Token ///////////////////////////////////////////////////////////////////////////
+//////////////// Bearer Token //////////////////////////////////////////////////////////////
 (function() {
   var stateKey = "spotify_auth_state";
   /**
@@ -312,19 +312,30 @@ $(document).on("click", ".show-button", function() {
   spotifyArray = $(this)
     .attr("data-artist")
     .split(",");
-  console.log(spotifyArray);
+  console.log(spotifyArray, spotifyArray.length);
   console.log($(this).attr("data-artist"));
-
+  let lastPass;
   if (spotifyArray.length > 1) {
     for (let i = 0; i < spotifyArray.length; i++) {
-      searchSpotify(access_token, spotifyArray[i], spotifyArray.length);
+      if (spotifyArray.length - 1 == i) {
+        lastPass = true;
+      } else {
+        lastPass = false;
+      }
+      searchSpotify(
+        access_token,
+        spotifyArray[i],
+        spotifyArray.length,
+        lastPass
+      );
       console.log(access_token);
     }
   } else {
-    searchSpotify(access_token, spotifyArray);
+    lastPass = true;
+    searchSpotify(access_token, spotifyArray, spotifyArray.length, lastPass);
   }
 
   console.log(trackListString);
-  
+
   makeFinalPlaylist();
 });
