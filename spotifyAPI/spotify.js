@@ -335,7 +335,9 @@ $(document).on("click", ".show-button", function() {
     searchSpotify(access_token, spotifyArray, spotifyArray.length, lastPass);
   }
 
+  // make sure tracklist string is not empty before creating running function
+  if (trackListString){
   console.log(trackListString);
-
   makeFinalPlaylist();
+  }
 });
