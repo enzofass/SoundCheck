@@ -30,8 +30,8 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
       // if we are done adding tracks to the array then we shuffle tracks and if array length is larger than 100 we narrow using splice meathod
       if (lastPass) {
         tracklist = shuffle(tracklist);
-        if (tracklist.length > 100) {
-          tracklist.splice(0, 100);
+        if (tracklist.length > 99) {
+          tracklist.splice(99);
         }
         console.log("shuffle: ", tracklist);
         // this loop takes final tracklist array and converts to a string with concatinated text required for sportify api post request
@@ -336,8 +336,8 @@ $(document).on("click", ".show-button", function() {
   }
 
   // make sure tracklist string is not empty before creating running function
-  if (trackListString){
-  console.log(trackListString);
+  // console.log(trackListString);
+  // if (trackListString){
   makeFinalPlaylist();
-  }
+  // }
 });
