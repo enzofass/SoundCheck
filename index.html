@@ -1,101 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sound Check</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Sound Check</title>
+    <!-- Added link to the jQuery Library -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
-  <!-- Added link to the jQuery Library -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+    <!-- Added a link to Bootstrap-->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" /> -->
 
-  <!-- Added a link to Bootstrap-->
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" /> -->
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
+    />
 
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!-- google fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Monoton"
+      rel="stylesheet"
+    />
 
+    <!-- Added a link to our external stylesheet-->
+    <link rel="stylesheet" href="./assets/styles/style.css" />
+  </head>
 
-  <!-- google fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
+  <body>
+    <div class="container" id="soundcheck">
+      <h1>SoundCheck</h1>
+    </div>
 
-  <!-- Added a link to our external stylesheet-->
-  <link rel="stylesheet" href="./assets/styles/style.css" />
-  <style type="text/css">
-    #login, #loggedin {
-      display: none;
-    }
-    .text-overflow {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 500px;
-    }
-  </style>
-</head>
+    <div class="container">
+      <form class="form-inline" id="artist-search-form">
+        <input
+          class="form-control mr-sm-2 border border-primary"
+          id="artist-input"
+          type="search"
+          placeholder="Foo Fighters"
+          aria-label="Search"
+        />
+        <button
+          class="btn btn-outline-success my-2 my-sm-0"
+          id="add-artist"
+          type="submit"
+        >
+          Search
+        </button>
+      </form>
+    </div>
 
-<body>
+    <div class="container" id="sign-in">
+      <form class="form-inline">
+        <div id="login">
+          <h2 id="#welcome-message">
+            Welcome To SoundCheck! Please Log In With Spotify
+          </h2>
+          <button id="login-button" class="btn btn-primary">
+            Log in with Spotify
+          </button>
+        </div>
+      </form>
+    </div>
 
-  <nav class="navbar navbar-light bg-light">
-    <h1 class="title">SoundCheck</h1>
-    <form class="form-inline" id="artist-search-form" >
-      <input class="form-control mr-sm-2" id="artist-input" type="search" placeholder="Foo Fighters" aria-label="Search" />
-      <button class="btn btn-outline-success my-2 my-sm-0" id="add-artist" type="submit" >
-        Search
-      </button>
-      
-    </form>
+    <div class="container">
+      <div class="row">
+        <div id="music-div"></div>
 
-    <form class="form-inline">
-      <div id="login">
-        <h1 id="#welcome-message" >Welcome To SoundCheck! Please Log In With Spotify</h1>
-        <button id="login-button" class="btn btn-primary">Log in with Spotify</button>
-      </div>
-    </form>
-  </nav>
-
-  <div class="containter" id="shows">
-    <div class="row">
-      <div class="col">
-        show buttons go here
-      </div>
-      <div class="col">
-        <div id="musicDiv"></div>
+        <div id="shows" class="list-group"></div>
       </div>
     </div>
-  </div>
 
-  <div class="card">footer</div>
-
-  <script id="user-profile-template" type="text/x-handlebars-template">
-    <h1>Logged in as {{display_name}}</h1>
-    <div class="media">
-      <div class="pull-left">
-        <img class="media-object" width="150" src="{{images.0.url}}" />
+    <script id="user-profile-template" type="text/x-handlebars-template">
+      <h1>Logged in as {{display_name}}</h1>
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object" width="150" src="{{images.0.url}}" />
+        </div>
+        <div class="media-body">
+          <dl class="dl-horizontal">
+            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
+            <dt>Id</dt><dd>{{id}}</dd>
+            <dt>Email</dt><dd>{{email}}</dd>
+            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+            <dt>Country</dt><dd>{{country}}</dd>
+          </dl>
+        </div>
       </div>
-      <div class="media-body">
-        <dl class="dl-horizontal">
-          <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-          <dt>Id</dt><dd>{{id}}</dd>
-          <dt>Email</dt><dd>{{email}}</dd>
-          <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-          <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-          <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-          <dt>Country</dt><dd>{{country}}</dd>
-        </dl>
+    </script>
+
+    <script id="oauth-template" type="text/x-handlebars-template">
+      <h2>oAuth info</h2>
+      <dl class="dl-horizontal">
+        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
+      </dl>
+    </script>
+
+    <!-- <nav class="navbar fixed-bottom navbar-light bg-light">
+      <div class="nav-div">
+        <span>
+          <a href="https://www.facebook.com/alex.eversbusch"
+            ><img
+              id="social-media-icon"
+              src="assets/images/fb.png"
+              alt="facebook"
+          /></a>
+        </span>
+        <span>
+          <a href="https://github.com/abusch419"
+            ><img
+              id="social-media-icon"
+              src="assets/images/github.png"
+              alt="github"
+          /></a>
+        </span>
+        <span>
+          <a href="https://www.instagram.com/localmotiveathens/"
+            ><img
+              id="social-media-icon"
+              src="assets/images/insta.png"
+              alt="insta"
+          /></a>
+        </span>
+        <span>
+          <a href="https://www.linkedin.com/in/alex-eversbusch-59834b25/"
+            ><img
+              id="social-media-icon"
+              src="assets/images/linkedin.png"
+              alt="linkedin"
+          /></a>
+        </span>
+        <span>
+          <a href="https://soundcloud.com/localmotiveathens"
+            ><img
+              id="social-media-icon"
+              src="assets/images/soundcloud.png"
+              alt="soundcloud"
+          /></a>
+        </span>
       </div>
-    </div>
-  </script>
+    </nav> -->
 
-  <script id="oauth-template" type="text/x-handlebars-template">
-    <h2>oAuth info</h2>
-    <dl class="dl-horizontal">
-      <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-    </dl>
-  </script>
-
-  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-  <!-- <script type="text/javascript" src="./assets/javascript/spotify.js"></script> -->
-  <script src="./spotifyAPI/spotify.js"></script>
-</body>
-
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <!-- <script type="text/javascript" src="./assets/javascript/spotify.js"></script> -->
+    <script src="./spotifyAPI/spotify.js"></script>
+  </body>
 </html>
