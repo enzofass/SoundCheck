@@ -167,7 +167,7 @@ function updatePlaylist(playlistId, trackListString, token) {
 // render playlist to DOM
 function renderPlaylist(playlistId) {
   console.log("populating playlist:", playlistId);
-  $("#musicDiv").append(
+  $("#music-div").append(
     `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
 }
@@ -229,11 +229,15 @@ function renderPlaylist(playlistId) {
           $("#login").hide();
           $("#loggedin").show();
           // searchSpotify(access_token);
+          $("#artist-input").show();
+          $("#add-artist").show();
+          $("#sign-in").hide();
         }
       });
     } else {
       $("#login").show();
       $("#loggedin").hide();
+      
     }
     document.getElementById("login-button").addEventListener(
       "click",
@@ -256,6 +260,12 @@ function renderPlaylist(playlistId) {
       },
       false
     );
+    // hiding from DOM until user is logged in to spotify
+    $("#user-profile").hide();
+    $("#artist-input").hide();
+    $("#add-artist").hide();
+    
+
   }
 })();
 
@@ -288,9 +298,9 @@ const renderShows = function(responseArray) {
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
     $("#shows").append(
-      `<button class="show-button" data-artist="${artistInfo.lineup}"> City: ${
+      `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${artistInfo.lineup}"> Date: ${res}  City: ${
         artistInfo.venue.city
-      } State: ${artistInfo.venue.region} Date: ${res} Full Lineup: ${
+      }  State: ${artistInfo.venue.region}  Full Lineup: ${
         artistInfo.lineup
       }</button>`
     );
@@ -339,5 +349,6 @@ $(document).on("click", ".show-button", function() {
   // console.log(trackListString);
   // if (trackListString){
   makeFinalPlaylist();
+  $("#shows").empty()
   // }
 });
