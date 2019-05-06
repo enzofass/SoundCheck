@@ -1,3 +1,5 @@
+hideloader();
+
 // global variables
 let trackListString = "";
 let playlistId;
@@ -47,6 +49,7 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
 
 // this function is called once we have a finalized tracklist
 function makeFinalPlaylist() {
+  showloader();
   token = access_token;
   getUser(token)
     .then(function(res, err) {
@@ -72,6 +75,7 @@ function makeFinalPlaylist() {
       // Clear tracklist string 
       trackListString = "";
     });
+    hideloader();
 }
 
 //////////// Function Definitions /////////////////////
@@ -167,10 +171,12 @@ function updatePlaylist(playlistId, trackListString, token) {
 // render playlist to DOM
 function renderPlaylist(playlistId) {
   console.log("populating playlist:", playlistId);
-  $("#music-div").append(
+ 
+  $("#music-div").prepend(
     `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
 }
+
 
 //////////////// Bearer Token //////////////////////////////////////////////////////////////
 (function() {
@@ -232,6 +238,8 @@ function renderPlaylist(playlistId) {
           $("#artist-input").show();
           $("#add-artist").show();
           $("#sign-in").hide();
+          $("#clear").show();
+          hideloader();
         }
       });
     } else {
@@ -264,6 +272,7 @@ function renderPlaylist(playlistId) {
     $("#user-profile").hide();
     $("#artist-input").hide();
     $("#add-artist").hide();
+    $("#clear").hide();
     
 
   }
@@ -292,20 +301,22 @@ function queryShows() {
 
 // function to render show buttons to the DOM
 const renderShows = function(responseArray) {
+ 
   const showContainer = $("<div>");
   responseArray.forEach(function(artistInfo) {
     console.log(artistInfo.lineup.toString());
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
-    $("#shows").append(
+    $("#shows").prepend(
       `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${artistInfo.lineup}"> Date: ${res}  City: ${
         artistInfo.venue.city
       }  State: ${artistInfo.venue.region}  Full Lineup: ${
         artistInfo.lineup
       }</button>`
     );
-  });
+  }); 
 };
+
 // click handler for grabbing info from search bar and making buttons
 $("#add-artist").on("click", function(event) {
   event.preventDefault();
@@ -318,6 +329,7 @@ $("#add-artist").on("click", function(event) {
 
 // click handler for picking a show to grab info from and send to spootifu API
 $(document).on("click", ".show-button", function() {
+  showloader();
   console.log("showbutton");
   spotifyArray = $(this)
     .attr("data-artist")
@@ -349,6 +361,24 @@ $(document).on("click", ".show-button", function() {
   // console.log(trackListString);
   // if (trackListString){
   makeFinalPlaylist();
-  $("#shows").empty()
   // }
 });
+
+//////////////// Clear Function //////////////////////////////////////////////////////////////
+
+
+$("#clear").on("click", function(ev) {
+  $("#shows").detatch();
+  $("#music-div").detatch();
+});
+
+// loader
+
+function hideloader () {
+  document.getElementById("loading").style.display = "none";
+}
+
+function showloader () {
+  document.getElementById("loading").style.display = "inherent";
+}
+

@@ -1,76 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Sound Check</title>
 
-    <!-- Added link to the jQuery Library -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Check</title>
 
-    <!-- Added a link to Bootstrap-->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" /> -->
+  <!-- Added link to the jQuery Library -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 
-    <link
-      rel="stylesheet"
-      href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
-    />
+  <!-- Added a link to Bootstrap-->
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" /> -->
 
-    <!-- google fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Monoton"
-      rel="stylesheet"
-    />
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
 
-    <!-- Added a link to our external stylesheet-->
-    <link rel="stylesheet" href="./assets/styles/style.css" />
-  </head>
+  <!-- google fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet" />
 
-  <body>
-    <div class="container" id="soundcheck">
-      <h1>SoundCheck</h1>
-    </div>
+  <!-- Added a link to our external stylesheet-->
+  <link rel="stylesheet" href="./assets/styles/style.css" />
+</head>
 
-    <div class="container">
-      <form class="form-inline" id="artist-search-form">
-        <input
-          class="form-control mr-sm-2 border border-primary"
-          id="artist-input"
-          type="search"
-          placeholder="Foo Fighters"
-          aria-label="Search"
-        />
-        <button
-          class="btn btn-outline-success my-2 my-sm-0"
-          id="add-artist"
-          type="submit"
-        >
-          Search
+<body>
+
+  
+
+  
+  <div class="container" id="soundcheck">
+    <h1>SoundCheck</h1>
+  </div>
+
+
+  <div class="container">
+    <form class="form-inline" id="artist-search-form">
+      <input class="form-control mr-sm-2 border border-primary" id="artist-input" type="search"
+        placeholder="Foo Fighters" aria-label="Search" />
+      <button class="btn btn-outline-success my-2 my-sm-0" id="add-artist" type="submit">
+        Search
+      </button>
+      <button class="btn btn-outline-success my-2 my-sm-0" id="clear" type="submit">
+        Clear
+      </button>
+    </form>
+  </div>
+
+  <div class="container" id="sign-in">
+    <form class="form-inline">
+      <div id="login">
+        <h2 id="#welcome-message">
+          Welcome To SoundCheck! Please Log In With Spotify
+        </h2>
+        <button id="login-button" class="btn btn-primary">
+          Log in with Spotify
         </button>
-      </form>
-    </div>
-
-    <div class="container" id="sign-in">
-      <form class="form-inline">
-        <div id="login">
-          <h2 id="#welcome-message">
-            Welcome To SoundCheck! Please Log In With Spotify
-          </h2>
-          <button id="login-button" class="btn btn-primary">
-            Log in with Spotify
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <div class="container">
-      <div class="row">
-        <div id="music-div"></div>
-
-        <div id="shows" class="list-group"></div>
       </div>
-    </div>
+    </form>
+  </div>
 
-    <script id="user-profile-template" type="text/x-handlebars-template">
+  <div class="container">
+    <div class="row">
+        <div id="loading"></div>
+      <div class="col-lg-6" id="music-div"></div>
+
+      <div class="col-lg-6" id="shows" class="list-group"></div>
+    </div>
+  </div>
+
+  <script id="user-profile-template" type="text/x-handlebars-template">
       <h1>Logged in as {{display_name}}</h1>
       <div class="media">
         <div class="pull-left">
@@ -90,14 +86,14 @@
       </div>
     </script>
 
-    <script id="oauth-template" type="text/x-handlebars-template">
+  <script id="oauth-template" type="text/x-handlebars-template">
       <h2>oAuth info</h2>
       <dl class="dl-horizontal">
         <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
       </dl>
     </script>
 
-    <!-- <nav class="navbar fixed-bottom navbar-light bg-light">
+  <!-- <nav class="navbar fixed-bottom navbar-light bg-light">
       <div class="nav-div">
         <span>
           <a href="https://www.facebook.com/alex.eversbusch"
@@ -142,24 +138,19 @@
       </div>
     </nav> -->
 
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <!-- <script type="text/javascript" src="./assets/javascript/spotify.js"></script> -->
-    <script src="assets/javascript/spotify.js"></script>
-  </body>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <!-- <script type="text/javascript" src="./assets/javascript/spotify.js"></script> -->
+  <script src="assets/javascript/spotify.js"></script>
+</body>
+
 </html>
