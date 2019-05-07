@@ -130,7 +130,7 @@ function createPlaylist(userId, token) {
       Authorization: "Bearer " + token
     },
     data: JSON.stringify({
-      name: "SoundCheck Playlist"
+      name: `${spotifyArray[0]} Playlist By SoundCheck`
     })
   });
 }
