@@ -16,14 +16,14 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
 
   // spotify api search artist get request, response is an object and we grab the id in order to continue
   searchArtist(searchParams, token)
-    .then(function(response, err) {
+    .then(function (response, err) {
       console.log(response);
       console.log(response.artists.items[0].id);
       artistId = response.artists.items[0].id;
       // calls getTopTracks function which generates an array of top tracks for artist
       return getTopTracks(artistId, token);
     })
-    .then(function(res, err) {
+    .then(function (res, err) {
       console.log(res, arrayLength);
       // for loop that iterates through the spotify top tracks array and pushes tracks into our tracklist var
       for (let i = 0; i < res.tracks.length; i++) {
@@ -52,13 +52,13 @@ function makeFinalPlaylist() {
   showloader();
   token = access_token;
   getUser(token)
-    .then(function(res, err) {
+    .then(function (res, err) {
       const userId = res.id;
       console.log("getuser");
       // This function creates a new playlist called SoundCheck Playlist for spotify user logged in
       return createPlaylist(userId, token);
     })
-    .then(function(res, err) {
+    .then(function (res, err) {
       console.log("create playlist:", res.id);
       playlistId = res.id;
       console.log("create playlist" + token);
@@ -66,16 +66,16 @@ function makeFinalPlaylist() {
       // This funtion loads out tracklist into the newly generated playlist
       return updatePlaylist(res.id, trackListString, token);
     })
-    .then(function() {
+    .then(function () {
       console.log("renderplaylist");
       // This function renders the playlist to the DOM
       renderPlaylist(playlistId);
     })
-    .then(function() {
+    .then(function () {
       // Clear tracklist string 
       trackListString = "";
     });
-    hideloader();
+  hideloader();
 }
 
 //////////// Function Definitions /////////////////////
@@ -171,7 +171,7 @@ function updatePlaylist(playlistId, trackListString, token) {
 // render playlist to DOM
 function renderPlaylist(playlistId) {
   console.log("populating playlist:", playlistId);
- 
+
   $("#music-div").prepend(
     `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
@@ -179,7 +179,7 @@ function renderPlaylist(playlistId) {
 
 
 //////////////// Bearer Token //////////////////////////////////////////////////////////////
-(function() {
+(function () {
   var stateKey = "spotify_auth_state";
   /**
    * Obtains parameters from the hash of the URL
@@ -210,7 +210,7 @@ function renderPlaylist(playlistId) {
     return text;
   }
   var userProfileSource = document.getElementById("user-profile-template")
-      .innerHTML,
+    .innerHTML,
     userProfileTemplate = Handlebars.compile(userProfileSource),
     userProfilePlaceholder = document.getElementById("user-profile");
   (oauthSource = document.getElementById("oauth-template").innerHTML),
@@ -230,7 +230,7 @@ function renderPlaylist(playlistId) {
         headers: {
           Authorization: "Bearer " + access_token
         },
-        success: function(response) {
+        success: function (response) {
           // userProfilePlaceholder.innerHTML = userProfileTemplate(response);
           $("#login").hide();
           $("#loggedin").show();
@@ -245,11 +245,11 @@ function renderPlaylist(playlistId) {
     } else {
       $("#login").show();
       $("#loggedin").hide();
-      
+
     }
     document.getElementById("login-button").addEventListener(
       "click",
-      function(e) {
+      function (e) {
         e.preventDefault();
         console.log("Login Clicked");
         var client_id = "2cdaa474a40145d9891e1690a0a81ac0"; // Your client id
@@ -273,7 +273,7 @@ function renderPlaylist(playlistId) {
     $("#artist-input").hide();
     $("#add-artist").hide();
     $("#clear").hide();
-    
+
 
   }
 })();
@@ -292,7 +292,7 @@ function queryShows() {
   $.ajax({
     url: queryUrl,
     method: "GET"
-  }).then(function(response) {
+  }).then(function (response) {
     console.log(response);
     //  var showsArray = response.offers.artist
     renderShows(response);
@@ -300,25 +300,25 @@ function queryShows() {
 }
 
 // function to render show buttons to the DOM
-const renderShows = function(responseArray) {
- 
+const renderShows = function (responseArray) {
+
   const showContainer = $("<div>");
-  responseArray.forEach(function(artistInfo) {
+  responseArray.forEach(function (artistInfo) {
     console.log(artistInfo.lineup.toString());
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
     $("#shows").prepend(
-      `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${artistInfo.lineup}"> Date: ${res}  City: ${
-        artistInfo.venue.city
-      }  State: ${artistInfo.venue.region}  Full Lineup: ${
-        artistInfo.lineup
+      `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${artistInfo.lineup}"> <b>Date:</b> ${res}  <b>City:</b> ${
+      artistInfo.venue.city
+      }  <b>State:</b> ${artistInfo.venue.region}  <b>Lineup:</b> ${
+      artistInfo.lineup
       }</button>`
     );
-  }); 
+  });
 };
 
 // click handler for grabbing info from search bar and making buttons
-$("#add-artist").on("click", function(event) {
+$("#add-artist").on("click", function (event) {
   event.preventDefault();
   artist = $("#artist-input")
     .val()
@@ -328,7 +328,7 @@ $("#add-artist").on("click", function(event) {
 });
 
 // click handler for picking a show to grab info from and send to spootifu API
-$(document).on("click", ".show-button", function() {
+$(document).on("click", ".show-button", function () {
   showloader();
   console.log("showbutton");
   spotifyArray = $(this)
@@ -367,18 +367,19 @@ $(document).on("click", ".show-button", function() {
 //////////////// Clear Function //////////////////////////////////////////////////////////////
 
 
-$("#clear").on("click", function(ev) {
-  $("#shows").detatch();
-  $("#music-div").detatch();
+$("#clear").on("click", function () {
+  // a.preventDefault();
+  $("#shows").empty();
+  $("#music-div").empty();
 });
 
 // loader
 
-function hideloader () {
+function hideloader() {
   document.getElementById("loading").style.display = "none";
 }
 
-function showloader () {
+function showloader() {
   document.getElementById("loading").style.display = "inherent";
 }
 
