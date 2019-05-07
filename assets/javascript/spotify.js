@@ -1,3 +1,5 @@
+hideloader();
+
 // global variables
 let trackListString = "";
 let playlistId;
@@ -47,6 +49,7 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
 
 // this function is called once we have a finalized tracklist
 function makeFinalPlaylist() {
+  showloader();
   token = access_token;
   getUser(token)
     .then(function(res, err) {
@@ -69,9 +72,10 @@ function makeFinalPlaylist() {
       renderPlaylist(playlistId);
     })
     .then(function() {
-      // Clear tracklist string 
+      // Clear tracklist string
       trackListString = "";
     });
+  hideloader();
 }
 
 //////////// Function Definitions /////////////////////
@@ -237,7 +241,6 @@ function renderPlaylist(playlistId) {
     } else {
       $("#login").show();
       $("#loggedin").hide();
-      
     }
     document.getElementById("login-button").addEventListener(
       "click",
@@ -264,8 +267,7 @@ function renderPlaylist(playlistId) {
     $("#user-profile").hide();
     $("#artist-input").hide();
     $("#add-artist").hide();
-    
-
+    $("#clear").hide();
   }
 })();
 
@@ -297,15 +299,18 @@ const renderShows = function(responseArray) {
     console.log(artistInfo.lineup.toString());
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
-    $("#shows").append(
-      `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${artistInfo.lineup}"> Date: ${res}  City: ${
+    $("#shows").prepend(
+      `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
+        artistInfo.lineup
+      }"> <b>Date:</b> ${res}  <b>City:</b> ${
         artistInfo.venue.city
-      }  State: ${artistInfo.venue.region}  Full Lineup: ${
+      }  <b>State:</b> ${artistInfo.venue.region}  <b>Lineup:</b> ${
         artistInfo.lineup
       }</button>`
     );
   });
 };
+
 // click handler for grabbing info from search bar and making buttons
 $("#add-artist").on("click", function(event) {
   event.preventDefault();
@@ -318,6 +323,7 @@ $("#add-artist").on("click", function(event) {
 
 // click handler for picking a show to grab info from and send to spootifu API
 $(document).on("click", ".show-button", function() {
+  showloader();
   console.log("showbutton");
   spotifyArray = $(this)
     .attr("data-artist")
@@ -349,6 +355,24 @@ $(document).on("click", ".show-button", function() {
   // console.log(trackListString);
   // if (trackListString){
   makeFinalPlaylist();
-  $("#shows").empty()
   // }
 });
+
+//////////////// Clear Function //////////////////////////////////////////////////////////////
+
+$("#clear").on("click", function() {
+  // a.preventDefault();
+  $("#shows").empty();
+  $("#music-div").empty();
+});
+
+// loader
+
+function hideloader() {
+  document.getElementById("loading").style.display = "none";
+}
+
+function showloader() {
+  document.getElementById("loading").style.display = "inherent";
+}
+
