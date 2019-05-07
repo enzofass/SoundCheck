@@ -99,7 +99,20 @@ iframe {
   right: 0;
   left: 0;
   margin: auto;
-  animation: round 2s linear infinite;
+  animation: round 500ms linear infinite;
+  z-index: 3;
+}
+
+.musicLoader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ccc;
+  border-top-color: blue;
+  border-radius: 100%;
+  animation: round 10s linear infinite;
+  z-index: 3;
+  margin: auto;
+  margin-top: 25px;
 }
 
 @keyframes round {
