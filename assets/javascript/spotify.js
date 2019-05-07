@@ -341,31 +341,26 @@ $(document).on("click", ".show-button", function () {
   console.log(spotifyArray, spotifyArray.length);
   console.log($(this).attr("data-artist"));
   let lastPass;
-  if (spotifyArray.length > 1) {
-    for (let i = 0; i < spotifyArray.length; i++) {
-      if (spotifyArray.length - 1 == i) {
-        lastPass = true;
-      } else {
-        lastPass = false;
-      }
-      searchSpotify(
-        access_token,
-        spotifyArray[i],
-        spotifyArray.length,
-        lastPass
-      );
-      console.log(access_token);
+  const artistRequests = [];
+  for (let i = 0; i < spotifyArray.length; i++) {
+    if (spotifyArray.length - 1 == i) {
+      lastPass = true;
+    } else {
+      lastPass = false;
     }
-  } else {
-    lastPass = true;
-    searchSpotify(access_token, spotifyArray, spotifyArray.length, lastPass);
+    const artistReq = searchSpotify(
+      access_token,
+      spotifyArray[i],
+      spotifyArray.length,
+      lastPass
+    );
+    artistRequests.push(artistReq);
+    console.log(access_token);
   }
 
-  // make sure tracklist string is not empty before creating running function
-  // console.log(trackListString);
-  // if (trackListString){
-  makeFinalPlaylist();
-  // }
+  Promise.all(artistRequests).then(function () {
+    makeFinalPlaylist();
+  });
 });
 
 //////////////// Clear Function //////////////////////////////////////////////////////////////
