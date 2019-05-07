@@ -256,7 +256,7 @@ function renderPlaylist(playlistId) {
         e.preventDefault();
         console.log("Login Clicked");
         var client_id = "2cdaa474a40145d9891e1690a0a81ac0"; // Your client id
-        var redirect_uri = "http://127.0.0.1:5501/index.html"; // Your redirect uri
+        var redirect_uri = window.location.href;//"http://127.0.0.1:5501/index.html"; // Your redirect uri
         var state = generateRandomString(16);
         localStorage.setItem(stateKey, state);
         var scope = "user-read-private user-read-email playlist-modify";
