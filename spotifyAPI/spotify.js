@@ -125,7 +125,7 @@ function createPlaylist(userId, token) {
       Authorization: "Bearer " + token
     },
     data: JSON.stringify({
-      name: "SoundCheck Playlist"
+      name: `${spotifyArray[0]} Playlist by SoundCheck`
     })
   });
 }
@@ -159,7 +159,7 @@ function updatePlaylist(playlistId, trackListString, token) {
       Authorization: "Bearer " + token
     },
     data: JSON.stringify({
-      name: "Mic Check Playlist"
+      name: `${spotifyArray[0]} Playlist by SoundCheck`
     })
   });
 }
