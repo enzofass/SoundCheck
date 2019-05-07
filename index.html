@@ -21,11 +21,12 @@
   <link rel="stylesheet" href="./assets/styles/style.css" />
 </head>
 
-<body>
+<body onload="hideMusicLoader()">
+  <div id="loading"></div>
 
-  
 
-  
+
+
   <div class="container" id="soundcheck">
     <h1>SoundCheck</h1>
   </div>
@@ -59,8 +60,10 @@
 
   <div class="container">
     <div class="row">
-        <div id="loading"></div>
-      <div class="col-lg-6" id="music-div"></div>
+      <div class="col-lg-6" id="music-div">
+        <div id="musicLoader"></div>
+
+      </div>
 
       <div class="col-lg-6" id="shows" class="list-group"></div>
     </div>

@@ -1,4 +1,5 @@
 hideloader();
+hideMusicLoader()
 
 // global variables
 let trackListString = "";
@@ -49,7 +50,7 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
 
 // this function is called once we have a finalized tracklist
 function makeFinalPlaylist() {
-  showloader();
+  // showloader();
   token = access_token;
   getUser(token)
     .then(function (res, err) {
@@ -75,7 +76,7 @@ function makeFinalPlaylist() {
       // Clear tracklist string 
       trackListString = "";
     });
-  hideloader();
+  // hideloader();
 }
 
 //////////// Function Definitions /////////////////////
@@ -175,6 +176,7 @@ function renderPlaylist(playlistId) {
   $("#music-div").prepend(
     `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
+  hideMusicLoader()
 }
 
 
@@ -240,6 +242,7 @@ function renderPlaylist(playlistId) {
           $("#sign-in").hide();
           $("#clear").show();
           hideloader();
+          hideMusicLoader()
         }
       });
     } else {
@@ -329,7 +332,8 @@ $("#add-artist").on("click", function (event) {
 
 // click handler for picking a show to grab info from and send to spootifu API
 $(document).on("click", ".show-button", function () {
-  showloader();
+  giveMusicLoaderClass();
+  showMusicLoader();
   console.log("showbutton");
   spotifyArray = $(this)
     .attr("data-artist")
@@ -376,10 +380,25 @@ $("#clear").on("click", function () {
 // loader
 
 function hideloader() {
+  console.log("Loader")
   document.getElementById("loading").style.display = "none";
+
+
 }
 
 function showloader() {
-  document.getElementById("loading").style.display = "inherent";
+  document.getElementById("loading").style.display = "inherit";
+
 }
 
+function giveMusicLoaderClass() {
+  document.getElementById("musicLoader").className = "musicLoader"
+}
+
+function hideMusicLoader() {
+  document.getElementById("musicLoader").style.display = "none";
+}
+
+function showMusicLoader() {
+  document.getElementById("musicLoader").style.display = "inherit";
+}
