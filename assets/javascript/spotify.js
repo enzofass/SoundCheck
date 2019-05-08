@@ -242,7 +242,7 @@ function renderPlaylist(playlistId) {
           $("#sign-in").hide();
           $("#clear").show();
           hideloader();
-          hideMusicLoader()
+          hideMusicLoader();
         }
       });
     } else {
