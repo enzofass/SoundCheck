@@ -1,5 +1,5 @@
-// hideloader();
-// hideMusicLoader();
+hideloader();
+hideMusicLoader();
 
 // global variables
 let trackListString = "";
@@ -27,7 +27,7 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
 
 // this function is called once we have a finalized tracklist
 function makeFinalPlaylist() {
-  // showloader();
+  showloader();
   token = access_token;
   getUser(token)
     .then(function(res, err) {
@@ -45,7 +45,7 @@ function makeFinalPlaylist() {
       // This function renders the playlist to the DOM
       renderPlaylist(playlistId);
     });
-  // hideloader();
+  hideloader();
 }
 
 //////////// Function Definitions /////////////////////
@@ -138,9 +138,9 @@ function updatePlaylist(playlistId, trackListString, token) {
 // render playlist to DOM
 function renderPlaylist(playlistId) {
   $("#music-div").prepend(
-    `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+    `<iframe id="spotifyPlaylist" src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
-  // hideMusicLoader();
+  hideMusicLoader();
 }
 
 //////////////// Bearer Token //////////////////////////////////////////////////////////////
@@ -204,8 +204,8 @@ function renderPlaylist(playlistId) {
           $("#add-artist").show();
           $("#sign-in").hide();
           $("#clear").show();
-          // hideloader();
-          // hideMusicLoader();
+          hideloader();
+          hideMusicLoader();
         }
       });
     } else {
@@ -268,7 +268,7 @@ const renderShows = function(responseArray) {
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
     $("#shows").prepend(
-      `<button class=" btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
+      `<button class="btn-default btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
         artistInfo.lineup
       }"> <b>Date:</b> ${res}  <b>City:</b> ${
         artistInfo.venue.city
@@ -290,8 +290,8 @@ $("#add-artist").on("click", function(event) {
 
 // click handler for picking a show to grab info from and send to spootifu API
 $(document).on("click", ".show-button", function() {
-  // giveMusicLoaderClass();
-  // showMusicLoader();
+  giveMusicLoaderClass();
+  showMusicLoader();
 
   spotifyArray = $(this)
     .attr("data-artist")
@@ -333,27 +333,28 @@ function buildTrackListString(trackListArr) {
 $("#clear").on("click", function(e) {
   e.preventDefault();
   $("#shows").empty();
-  $("#music-div").empty();
+  $("#music-div").html('<div id="musicLoader"></div>');
+   
 });
 
 // loader
 
-// function hideloader() {
-//   document.getElementById("loading").style.display = "none";
-// }
+function hideloader() {
+  document.getElementById("loading").style.display = "none";
+}
 
-// function showloader() {
-//   document.getElementById("loading").style.display = "inherit";
-// }
+function showloader() {
+  document.getElementById("loading").style.display = "inherit";
+}
 
-// function giveMusicLoaderClass() {
-//   document.getElementById("musicLoader").className = "musicLoader";
-// }
+function giveMusicLoaderClass() {
+  document.getElementById("musicLoader").className = "musicLoader";
+}
 
-// function hideMusicLoader() {
-//   document.getElementById("musicLoader").style.display = "none";
-// }
+function hideMusicLoader() {
+  document.getElementById("musicLoader").style.display = "none";
+}
 
-// function showMusicLoader() {
-//   document.getElementById("musicLoader").style.display = "inherit";
-// }
+function showMusicLoader() {
+  document.getElementById("musicLoader").style.display = "inherit";
+}
