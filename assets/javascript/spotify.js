@@ -27,7 +27,7 @@ function searchSpotify(token, searchParams, arrayLength, lastPass) {
 
 // this function is called once we have a finalized tracklist
 function makeFinalPlaylist() {
-  // showloader();
+  showloader();
   token = access_token;
   getUser(token)
     .then(function(res, err) {
@@ -45,7 +45,7 @@ function makeFinalPlaylist() {
       // This function renders the playlist to the DOM
       renderPlaylist(playlistId);
     });
-  // hideloader();
+  hideloader();
 }
 
 //////////// Function Definitions /////////////////////
@@ -138,7 +138,7 @@ function updatePlaylist(playlistId, trackListString, token) {
 // render playlist to DOM
 function renderPlaylist(playlistId) {
   $("#music-div").prepend(
-    `<iframe src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+    `<iframe id="spotifyPlaylist" src="https://open.spotify.com/embed/playlist/${playlistId}" width="300" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
   );
   hideMusicLoader();
 }
@@ -268,8 +268,10 @@ const renderShows = function(responseArray) {
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
     $("#shows").prepend(
+
+      `<button class="btn-default btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
       `<button class=" btn-default btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
-        artistInfo.lineup
+      artistInfo.lineup
       }"> <b>Date:</b> ${res}  <b>City:</b> ${
         artistInfo.venue.city
       }  <b>State:</b> ${artistInfo.venue.region}  <b>Lineup:</b> ${
@@ -333,7 +335,8 @@ function buildTrackListString(trackListArr) {
 $("#clear").on("click", function(e) {
   e.preventDefault();
   $("#shows").empty();
-  $("#music-div").empty();
+  $("#music-div").html('<div id="musicLoader"></div>');
+   
 });
 
 // loader
