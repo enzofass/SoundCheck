@@ -11,11 +11,11 @@ let artistId;
 // main spotify search function called when user clicks show button generated from BIT
 function searchSpotify(token, searchParams, arrayLength, lastPass) {
   // spotify api search artist get request, response is an object and we grab the id in order to continue
-  return searchArtist(searchParams, token).then(function(response, err) {
+  return searchArtist(searchParams, token).then(function (response, err) {
     if (response.artists.items.length > 0) {
       artistId = response.artists.items[0].id;
       // calls getTopTracks function which generates an array of top tracks for artist
-      return getTopTracks(artistId, token).then(function(res, err) {
+      return getTopTracks(artistId, token).then(function (res, err) {
         // for loop that iterates through the spotify top tracks array and pushes tracks into our tracklist var
         for (let i = 0; i < res.tracks.length; i++) {
           tracklist.push(`spotify:track:${res.tracks[i].id}`);
@@ -30,18 +30,18 @@ function makeFinalPlaylist() {
   showloader();
   token = access_token;
   getUser(token)
-    .then(function(res, err) {
+    .then(function (res, err) {
       const userId = res.id;
 
       // This function creates a new playlist called SoundCheck Playlist for spotify user logged in
       return createPlaylist(userId, token);
     })
-    .then(function(res, err) {
+    .then(function (res, err) {
       playlistId = res.id;
       // This funtion loads out tracklist into the newly generated playlist
       return updatePlaylist(res.id, trackListString, token);
     })
-    .then(function() {
+    .then(function () {
       // This function renders the playlist to the DOM
       renderPlaylist(playlistId);
     });
@@ -144,7 +144,7 @@ function renderPlaylist(playlistId) {
 }
 
 //////////////// Bearer Token //////////////////////////////////////////////////////////////
-(function() {
+(function () {
   var stateKey = "spotify_auth_state";
   /**
    * Obtains parameters from the hash of the URL
@@ -175,7 +175,7 @@ function renderPlaylist(playlistId) {
     return text;
   }
   var userProfileSource = document.getElementById("user-profile-template")
-      .innerHTML,
+    .innerHTML,
     userProfileTemplate = Handlebars.compile(userProfileSource),
     userProfilePlaceholder = document.getElementById("user-profile");
   (oauthSource = document.getElementById("oauth-template").innerHTML),
@@ -195,7 +195,7 @@ function renderPlaylist(playlistId) {
         headers: {
           Authorization: "Bearer " + access_token
         },
-        success: function(response) {
+        success: function (response) {
           // userProfilePlaceholder.innerHTML = userProfileTemplate(response);
           $("#login").hide();
           $("#loggedin").show();
@@ -214,11 +214,11 @@ function renderPlaylist(playlistId) {
     }
     document.getElementById("login-button").addEventListener(
       "click",
-      function(e) {
+      function (e) {
         e.preventDefault();
 
         var client_id = "2cdaa474a40145d9891e1690a0a81ac0"; // Your client id
-        var redirect_uri = window.location.href; //"http://127.0.0.1:5501/index.html"; // Your redirect uri
+        var redirect_uri = window.location.href; //; // Your redirect uri  "http://127.0.0.1:5501/index.html"
         var state = generateRandomString(16);
         localStorage.setItem(stateKey, state);
         var scope = "user-read-private user-read-email playlist-modify";
@@ -255,34 +255,32 @@ function queryShows() {
   $.ajax({
     url: queryUrl,
     method: "GET"
-  }).then(function(response) {
+  }).then(function (response) {
     //  var showsArray = response.offers.artist
     renderShows(response);
   });
 }
 
 // function to render show buttons to the DOM
-const renderShows = function(responseArray) {
+const renderShows = function (responseArray) {
   const showContainer = $("<div>");
-  responseArray.forEach(function(artistInfo) {
+  responseArray.forEach(function (artistInfo) {
     var str = artistInfo.datetime;
     var res = str.substring(0, 10);
     $("#shows").prepend(
-
       `<button class="btn-default btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
-      `<button class=" btn-default btn-secondary show-button btn-outline-secondary btn-block btn" data-artist="${
       artistInfo.lineup
       }"> <b>Date:</b> ${res}  <b>City:</b> ${
-        artistInfo.venue.city
+      artistInfo.venue.city
       }  <b>State:</b> ${artistInfo.venue.region}  <b>Lineup:</b> ${
-        artistInfo.lineup
+      artistInfo.lineup
       }</button>`
-    );
+    )
   });
 };
 
 // click handler for grabbing info from search bar and making buttons
-$("#add-artist").on("click", function(event) {
+$("#add-artist").on("click", function (event) {
   event.preventDefault();
   artist = $("#artist-input")
     .val()
@@ -291,7 +289,7 @@ $("#add-artist").on("click", function(event) {
 });
 
 // click handler for picking a show to grab info from and send to spootifu API
-$(document).on("click", ".show-button", function() {
+$(document).on("click", ".show-button", function () {
   giveMusicLoaderClass();
   showMusicLoader();
 
@@ -316,7 +314,7 @@ $(document).on("click", ".show-button", function() {
     artistRequests.push(artistReq);
   }
 
-  Promise.all(artistRequests).then(function() {
+  Promise.all(artistRequests).then(function () {
     trackListString = buildTrackListString(tracklist);
     makeFinalPlaylist();
   });
@@ -332,11 +330,11 @@ function buildTrackListString(trackListArr) {
 
 //////////////// Clear Function //////////////////////////////////////////////////////////////
 
-$("#clear").on("click", function(e) {
+$("#clear").on("click", function (e) {
   e.preventDefault();
   $("#shows").empty();
   $("#music-div").html('<div id="musicLoader"></div>');
-   
+
 });
 
 // loader
