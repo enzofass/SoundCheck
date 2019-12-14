@@ -196,7 +196,7 @@ function renderPlaylist(playlistId) {
 					Authorization: 'Bearer ' + access_token
 				},
 				success: function(response) {
-					console.log(response);
+					// console.log(response);
 					// response.setHeader('Set-Cookie', 'HttpOnly;Secure;SameSite=Strict');
 					// userProfilePlaceholder.innerHTML = userProfileTemplate(response);
 					$('#login').hide();
