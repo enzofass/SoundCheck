@@ -190,6 +190,7 @@ function renderPlaylist(playlistId) {
 	} else {
 		//   localStorage.removeItem(stateKey);
 		if (access_token) {
+			response.setHeader('Set-Cookie', 'HttpOnly;Secure;SameSite=Strict');
 			$.ajax({
 				url: 'https://api.spotify.com/v1/me',
 				headers: {
